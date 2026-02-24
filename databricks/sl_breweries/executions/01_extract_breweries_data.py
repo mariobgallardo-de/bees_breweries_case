@@ -12,10 +12,6 @@ from datetime import datetime
 
 # COMMAND ----------
 
-#test
-
-# COMMAND ----------
-
 # DBTITLE 1,Bronze Extract API Functions
 # MAGIC %run /Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/utils/bronze_selection
 
@@ -66,7 +62,9 @@ run_path = f"{day_path}/run_id={run_id}"
 day_success = f"{day_path}/_SUCCESS"
 
 if not ALLOW_MULTIPLE_RUNS_PER_DAY and path_exists(day_success):
-        raise Exception(f"Ingestion already successfully executed for {ingestion_date}. Aborting execution.")
+    msg = f"[SKIP] Bronze already executed for {ingestion_date}. Reusing existing data."
+    print(msg)
+    dbutils.notebook.exit(msg)
 
 # Starting bronze ingestion
 print(f"[INFO] Starting Bronze ingestion. ingestion_date={ingestion_date}, run_id={run_id}")

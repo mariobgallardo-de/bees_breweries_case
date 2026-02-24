@@ -81,8 +81,17 @@ df_raw = (
 df_standardized = standardize(df_raw)
 df_flagged = add_quality_flags(df_standardized)
 df_hash = add_hash(df_flagged)
-df_silver = build_silver_df(df_hash)
 
+
+# COMMAND ----------
+
+# DBTITLE 1,Select columns to Silver
+df_silver = df_hash.select(
+        "id", "name", "brewery_type", "address", "postal_code", "city", "state", "country",
+        "latitude", "longitude", "phone", "website_url",
+        "has_proper_encoding", "has_geolocation", "has_address", "has_website",
+        "ingestion_timestamp", "hash_merge"
+)
 
 # COMMAND ----------
 
