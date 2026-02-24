@@ -1,0 +1,14 @@
+{
+	"name": "ls_adb_bees_dev",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-7405609740720965.5.azuredatabricks.net",
+			"authentication": "MSI",
+			"workspaceResourceId": "/subscriptions/fb7c490e-7f1d-4e19-afe8-c93c24a85716/resourceGroups/rg-bees-de-case-dev/providers/Microsoft.Databricks/workspaces/adb-bees-breweries-case-dev",
+			"existingClusterId": "0220-221456-j4ib1vhe"
+		}
+	}
+}

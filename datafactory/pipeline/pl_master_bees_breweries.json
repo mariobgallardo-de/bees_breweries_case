@@ -1,0 +1,60 @@
+{
+	"name": "pl_master_bees_breweries",
+	"properties": {
+		"activities": [
+			{
+				"name": "pl_bees_breweries",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_bees_breweries",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "send_email_alert",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "pl_bees_breweries",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"url": "https://prod-91.eastus.logic.azure.com:443/workflows/a0f0af4bcfdb431798f652b52ec0c770/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=iYsJG5zJCQtZhdvxoY45W5Sdja55l4YD0ejiZ8Kun7c",
+					"body": {
+						"value": "@json(concat(\n'{',\n'\"pipeline\":\"', pipeline().Pipeline, '\",',\n'\"runId\":\"', pipeline().RunId, '\",',\n'\"trigger\":\"', pipeline().TriggerName, '\",',\n'\"status\":\"', activity('pl_bees_breweries').Status, '\",',\n'\"timestamp\":\"', utcnow(), '\"',\n'}'\n))",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "bees_breweries"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-02-23T13:17:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

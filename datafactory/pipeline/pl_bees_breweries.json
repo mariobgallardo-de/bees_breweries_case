@@ -1,0 +1,140 @@
+{
+	"name": "pl_bees_breweries",
+	"properties": {
+		"activities": [
+			{
+				"name": "01_api_ingestion",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "02_setup_gold",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "01_setup_silver",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/executions/01_extract_breweries_data"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_adb_bees_dev",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "02_data_standarization",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "01_api_ingestion",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/executions/02_transform_data"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_adb_bees_dev",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "03_data_aggregation",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "02_data_standarization",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/executions/03_aggregate_data"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_adb_bees_dev",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "01_setup_silver",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/setup/01_silver_breweries"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_adb_bees_dev",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "02_setup_gold",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/setup/02_gold_breweries"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_adb_bees_dev",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "bees_breweries"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-02-24T02:56:18Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

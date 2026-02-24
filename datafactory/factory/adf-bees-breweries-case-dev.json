@@ -1,0 +1,9 @@
+{
+	"name": "adf-bees-breweries-case-dev",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ae2bf0aa-41c6-47f3-9497-c92e91da0538",
+		"tenantId": "d51fba3f-a80c-4ff5-bc01-edfabe8cbd35"
+	}
+}
