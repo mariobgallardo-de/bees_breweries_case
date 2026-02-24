@@ -1,5 +1,26 @@
 from pyspark.sql import Row
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType
 from breweries_core import standardize, add_quality_flags, add_hash, build_silver_df
+
+RAW_SCHEMA = StructType([
+    StructField("id", StringType(), True),
+    StructField("name", StringType(), True),
+    StructField("brewery_type", StringType(), True),
+    StructField("address_1", StringType(), True),
+    StructField("address_2", StringType(), True),
+    StructField("address_3", StringType(), True),
+    StructField("street", StringType(), True),
+    StructField("postal_code", StringType(), True),
+    StructField("city", StringType(), True),
+    StructField("state", StringType(), True),
+    StructField("state_province", StringType(), True),
+    StructField("country", StringType(), True),
+    StructField("latitude", StringType(), True),   
+    StructField("longitude", StringType(), True), 
+    StructField("phone", StringType(), True),
+    StructField("website_url", StringType(), True),
+])
+
 
 def test_silver_standardize_and_flags(spark):
     df_raw = spark.createDataFrame([
@@ -39,7 +60,7 @@ def test_silver_standardize_and_flags(spark):
             phone=None,
             website_url=None,
         ),
-    ])
+    ], schema=RAW_SCHEMA)
 
     df = build_silver_df(add_hash(add_quality_flags(standardize(df_raw))))
     rows = {r["id"]: r for r in df.collect()}
