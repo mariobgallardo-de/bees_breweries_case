@@ -158,59 +158,63 @@ ingestion_date=YYYY-MM-DD/
 
 ---
 
-### 🥈 Silver Layer – Standardized & Validated
+### 🥈 Silver Layer — Standardized & Validated
 
 **Purpose:**  
-Clean, normalize, and enrich data while enforcing quality rules.
+Produce a curated **single source of truth** for brewery data, applying standardization and enforcing data quality rules.
 
-**Main transformations:**
-- Text normalization (trim, capitalization)
+**Transformations (high level):**
+- Text normalization (trim and capitalization)
 - Canonical address resolution
-- Latitude and longitude normalization
-- Phone number standardization
-- Deterministic hash generation for incremental updates
+- Latitude and longitude casting and rounding
+- Phone number normalization
+- Deterministic hash generation for incremental processing
 
-**Data quality flags:**
+**Output table:** `md_silver.tb_dim_brewery`  
+**Primary key:** `id`
+
+**Core columns (selected):**
+- `name`, `brewery_type`
+- `address`, `postal_code`, `city`, `state`, `country`
+- `latitude`, `longitude`
+- `phone`, `website_url`
+- `ingestion_timestamp`
+- `hash_merge` (used for incremental `MERGE`)
+
+**Data Quality flags:**
 - `has_proper_encoding`
 - `has_address`
 - `has_geolocation`
 - `has_website`
 
-**Incremental strategy:**
-- Hash‑based Delta `MERGE`
-- Only changed records are updated
-
-**Fail‑fast validations:**
+**DQ validations (fail‑fast):**
 - Empty dataset detection
-- Duplicate primary keys
-- Threshold‑based data quality checks
-
+- Duplicate primary key detection
+- Threshold‑based checks on quality flags
 ---
 
-### 🥇 Gold Layer – Analytical Aggregation
+### 🥇 Gold Layer — Analytical Aggregation
 
 **Purpose:**  
-Provide a business‑ready dataset for analytics and reporting.
+Provide an analytics‑ready dataset optimized for reporting and consumption.
 
-**Business definition:**
-- Includes only records that:
-- Have proper encoding
-- Contain a valid address
+**Business rules:**
+- Only records with:
+  - `has_proper_encoding = true`
+  - `has_address = true`
+  are included in the aggregation.
 
-**Aggregated by:**
-- Country
-- State
-- City
-- Brewery type
+**Output table:** `md_gold.tb_agg_brewery_location`  
+**Grain:** One row per `(country, state, city, brewery_type)`
 
 **Metrics:**
-- `brewery_count` (distinct breweries)
-- `last_update` timestamp
+- `brewery_count` — number of distinct breweries
+- `last_update` — aggregation timestamp
 
-**Validations:**
-- Dataset must not be empty
-- Aggregated counts must be positive
-- Null grouping keys are logged as warnings
+**DQ validations:**
+- Non‑empty aggregation (fail‑fast)
+- `brewery_count > 0` (fail‑fast)
+- Null grouping keys logged as warnings (monitoring)
 
 ---
 
