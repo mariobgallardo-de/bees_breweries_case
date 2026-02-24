@@ -37,7 +37,7 @@ Analytics / BI / Consumption
 The pipeline is orchestrated using Azure Data Factory, which triggers Databricks notebooks sequentially.
 
 <p align="center">
-  <img src="images/adf_pipeline.png" width="700"/>
+  <img src="images/adf_pipeline.png" width="500"/>
 </p>
 
 ---
