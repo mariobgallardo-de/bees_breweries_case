@@ -1,11 +1,16 @@
-#🐝 Bees Breweries Data <br>
+# 🐝 Bees Breweries Data Platform
 
-##📌 Overview<br>
+## 📌 Overview
 
-This project implements an end‑to‑end data ingestion and analytics pipeline for brewery data sourced from the Open Brewery DB API.<br>
-The solution follows modern Lakehouse and Medallion Architecture principles, using Azure-native services and Databricks to deliver a scalable, reliable, and maintainable data platform.<br>
-The pipeline ingests raw API data into a Bronze layer, applies standardization and data quality rules in the Silver layer, and produces a curated analytical dataset in the Gold layer.<br><br>
+This project implements an end‑to‑end data ingestion and analytics pipeline for brewery data sourced from the **Open Brewery DB API**.
 
+The solution follows modern **Lakehouse** and **Medallion Architecture** principles, using Azure‑native services and Databricks to deliver a scalable, reliable, and maintainable data platform.
+
+The pipeline ingests raw API data into a **Bronze** layer, applies standardization and data quality rules in the **Silver** layer, and produces a curated analytical dataset in the **Gold** layer.
+
+---
+
+## 🏗️ High‑Level Architecture
 ##🏗️ High‑Level Architecture
 Open Brewery DB API
         |
