@@ -246,13 +246,21 @@ databricks/
 
 ## Source Control and Versioning
 
-All Databricks notebooks and pipeline logic are versioned in GitHub using Databricks Repos.
+This project follows enterprise‑grade source control practices, with all orchestration and processing logic versioned in GitHub.
 
-This enables:
-- Full version control and change history
-- Collaboration and code review
-- Reproducibility of the pipeline logic
-- Alignment with CI/CD and enterprise development practices
+### Databricks
+
+- All Databricks notebooks are versioned using **Databricks Repos**.
+- This ensures:
+  - Full change history and traceability
+  - Reproducibility of data pipelines
+  - Alignment with collaborative development workflows
+
+### Azure Data Factory (ADF)
+
+- Azure Data Factory is connected to the same GitHub repository in **Git mode**.
+- Pipelines, datasets, and linked services are versioned in the collaboration branch.
+- Changes are committed to the collaboration branch (e.g. `main`) while working in draft mode.
 
 ---
 
