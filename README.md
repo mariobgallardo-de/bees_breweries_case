@@ -165,6 +165,9 @@ Marker files (`_SUCCESS`, `_LATEST`) guarantee:
 - **Support for multiple runs per day**  
   When enabled, multiple ingestion runs can occur within the same day, each identified by a unique `run_id`.
 
+**Lifecycle Management:**
+A storage‑level lifecycle policy is applied to the `bronze/openbrewerydb/` prefix, automatically deleting Bronze data older than 30 days.
+
 ---
 
 ### 🥈 Silver Layer — Standardized & Validated
