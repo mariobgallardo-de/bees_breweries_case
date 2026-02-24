@@ -99,11 +99,14 @@ Persist raw API responses exactly as received, without transformations.
 - Stored as JSON files.
 - Folder structure:
 
+```text
 ingestion_date=YYYY-MM-DD/
-run_id=YYYYMMDD_HHMMSS/
-breweries_page_*.json
-_SUCCESS
-
+  run_id=YYYYMMDD_HHMMSS/
+    breweries_page_*.json
+    _SUCCESS
+  _LATEST
+  _SUCCESS
+```
 
 - Marker files (`_SUCCESS`, `_LATEST`) guarantee:
 - Idempotent ingestion
