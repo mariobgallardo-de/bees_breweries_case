@@ -45,6 +45,34 @@ On failure, the master pipeline triggers an automated email notification via Azu
 
 ---
 
+## Azure Resources
+
+The following Azure resources were provisioned for this solution:
+
+- **Resource Group**
+  - `rg-bees-de-case-dev`
+
+- **Azure Data Lake Storage Gen2**
+  - Storage account: `stgbeesbreweriescasedev`
+  - Containers used: `bronze`, `silver`, `gold`
+
+- **Azure Databricks Workspace**
+  - `adb-bees-breweries-case-dev`
+
+- **Azure Data Factory**
+  - `adf-bees-breweries-case-dev`
+  - Master pipeline orchestrates execution of Bronze → Silver → Gold notebooks
+
+- **Azure Key Vault**
+  - `kv-bees-breweries-dev`
+  - Stores secrets for Databricks and ADF integration
+
+- **Azure Logic App**
+  - `la-bees-alert`
+  - Sends email notifications on pipeline failures
+
+---
+
 ## Architecture Components
 
 ### Azure Data Factory (ADF)
