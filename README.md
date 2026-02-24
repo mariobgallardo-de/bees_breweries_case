@@ -137,6 +137,9 @@ The following Azure resources were provisioned for this solution:
 **Purpose:**  
 Persist raw API responses exactly as received, without transformations.
 
+**Notebook:**
+databricks/sl_breweries/executions/01_extract_breweries_data
+
 **Key characteristics:**
 - Page‑based ingestion from the Open Brewery DB API.
 - Stored as JSON files.
@@ -162,6 +165,9 @@ ingestion_date=YYYY-MM-DD/
 
 **Purpose:**  
 Produce a curated **single source of truth** for brewery data, applying standardization and enforcing data quality rules.
+
+**Notebook:**
+databricks/sl_breweries/executions/02_transform_data
 
 **Transformations (high level):**
 - Text normalization (trim and capitalization)
@@ -197,6 +203,9 @@ Produce a curated **single source of truth** for brewery data, applying standard
 
 **Purpose:**  
 Provide an analytics‑ready dataset optimized for reporting and consumption.
+
+**Notebook:**
+databricks/sl_breweries/executions/03_aggregate_data
 
 **Business rules:**
 - Only records with:
@@ -300,7 +309,9 @@ This approach:
 - The default Hive Metastore in Databricks Standard workspaces does not persist metadata reliably.
 
 **Mitigation strategy:**
-- A setup notebook runs at pipeline start
+- Setup notebooks runs at pipeline start
+  - databricks/sl_breweries/setup/01_silver_breweries
+  - databricks/sl_breweries/setup/02_gold_breweries  
 - Databases and tables are created using `IF NOT EXISTS`
 
 This guarantees consistent execution even when metadata is lost between sessions.
