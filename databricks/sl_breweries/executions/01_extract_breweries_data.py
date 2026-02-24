@@ -12,6 +12,10 @@ from datetime import datetime
 
 # COMMAND ----------
 
+#test
+
+# COMMAND ----------
+
 # DBTITLE 1,Bronze Extract API Functions
 # MAGIC %run /Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/utils/bronze_selection
 
