@@ -185,6 +185,7 @@ databricks/
       ├── 01_bronze_execution
       ├── 02_silver_execution
       └── 03_gold_execution
+```
 
 **Design principles:**
 - `utils/` contains reusable, modular logic
