@@ -42,10 +42,6 @@ There is a master pipeline which invoke the pipeline containning all the steps a
   <img src="images/adf_pipeline.png" width="500"/>
 </p>
 
-<p align="center">
-  <img src="images/adf_pipeline2.png" width="700"/>
-</p>
-
 ---
 
 ## Architecture Components
