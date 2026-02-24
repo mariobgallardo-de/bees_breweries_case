@@ -256,7 +256,7 @@ This enables:
 
 ---
 
-## 🔐 Security & Identity
+## Security & Identity
 
 Authentication and secret management follow secure practices:
 
@@ -279,7 +279,7 @@ Architectural decisions were consciously adapted to remain **production‑realis
 - Job Clusters were initially designed for execution.
 - Due to compute capacity constraints commonly observed in trial subscriptions, job clusters could not reliably start.
 
-✅ Therefore, an existing **interactive cluster** is used for orchestration execution.
+Therefore, an existing **interactive cluster** is used for orchestration execution.
 
 This approach:
 - Does not impact pipeline logic
@@ -310,7 +310,17 @@ This guarantees consistent execution even when metadata is lost between sessions
 
 ---
 
-## ✅ Engineering Practices Demonstrated
+## Testing Strategy (Future Work)
+
+Due to time constraints and environment limitations, automated unit tests were not fully implemented.
+
+- Critical data validations are enforced directly in the pipeline runtime
+- Core transformation logic was designed to be testable
+- In production, this logic would be covered by PySpark unit tests executed in CI
+
+---
+
+## ✅ Engineering Practices Applied
 
 - Medallion Architecture (Bronze / Silver / Gold)
 - Incremental processing with Delta `MERGE`
@@ -320,16 +330,6 @@ This guarantees consistent execution even when metadata is lost between sessions
 - Centralized orchestration via ADF
 - Event‑driven alerting with Logic Apps
 - Infrastructure‑aware design decisions
-
----
-
-## Testing Strategy (Future Work)
-
-Due to time constraints and environment limitations, automated unit tests were not fully implemented.
-
-- Critical data validations are enforced directly in the pipeline runtime
-- Core transformation logic was designed to be testable
-- In production, this logic would be covered by PySpark unit tests executed in CI
 
 ---
 
