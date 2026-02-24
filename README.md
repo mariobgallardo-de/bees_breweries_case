@@ -12,22 +12,24 @@ The pipeline ingests raw API data into a **Bronze** layer, applies standardizati
 
 ## 🏗️ High‑Level Architecture
 
+```text
 Open Brewery DB API
-|
-v
+        |
+        v
 Azure Data Factory (ADF)
-|
-v
+        |
+        v
 Azure Databricks
-├── Bronze ingestion
-├── Silver transformation
-└── Gold aggregation
-|
-v
+   ├── Bronze ingestion
+   ├── Silver transformation
+   └── Gold aggregation
+        |
+        v
 Azure Data Lake Storage Gen2 (Delta Lake)
-|
-v
+        |
+        v
 Analytics / BI / Consumption
+```
 ---
 
 ## Architecture Components
@@ -230,7 +232,7 @@ This guarantees consistent execution even when metadata is lost between sessions
 
 ---
 
-### 🧭 Why Unity Catalog Was Not Used
+### Why Unity Catalog Was Not Used
 
 - Unity Catalog would normally be the recommended governance solution.
 - Trial account restrictions prevented assigning external metastore permissions.
@@ -254,7 +256,7 @@ This guarantees consistent execution even when metadata is lost between sessions
 
 ---
 
-## 🧪 Testing Strategy (Future Work)
+## Testing Strategy (Future Work)
 
 Due to time constraints and environment limitations, automated unit tests were not fully implemented.
 
@@ -264,7 +266,7 @@ Due to time constraints and environment limitations, automated unit tests were n
 
 ---
 
-## 🚀 Final Notes
+## Final Notes
 
 This project demonstrates:
 - Practical Lakehouse architecture design
