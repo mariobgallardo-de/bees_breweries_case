@@ -242,7 +242,8 @@ databricks/sl_breweries/executions/03_aggregate_data
 databricks/
   sl_breweries/
     setup/
-      └── Environment and table setup notebooks
+      ├── 01_silver_breweries
+      └── 02_gold_breweries
     utils/
       ├── common            # filesystem helpers and markers
       ├── bronze_lib        # API ingestion logic
@@ -250,9 +251,9 @@ databricks/
       ├── dq                # reusable data quality rules
       └── gold_lib          # gold aggregation logic
     executions/
-      ├── 01_bronze_execution
-      ├── 02_silver_execution
-      └── 03_gold_execution
+      ├── 01_extract_breweries_data (Bronze)
+      ├── 02_transform_data (Silver)
+      └── 03_aggregate_data (Gold)
 ```
 
 **Design principles:**
