@@ -169,20 +169,22 @@ Provide a business‑ready dataset for analytics and reporting.
 ---
 
 ## 📂 Repository Structure
+
+```text
 databricks/
-sl_breweries/
-setup/
-└── Environment and table setup notebooks
-utils/
-├── common            # filesystem helpers and markers
-├── bronze_lib        # API ingestion logic
-├── silver_transform  # transformations and DQ
-├── dq                # reusable data quality rules
-└── gold_lib          # gold aggregation logic
-executions/
-├── 01_bronze_execution
-├── 02_silver_execution
-└── 03_gold_execution
+  sl_breweries/
+    setup/
+      └── Environment and table setup notebooks
+    utils/
+      ├── common            # filesystem helpers and markers
+      ├── bronze_lib        # API ingestion logic
+      ├── silver_transform  # transformations and DQ
+      ├── dq                # reusable data quality rules
+      └── gold_lib          # gold aggregation logic
+    executions/
+      ├── 01_bronze_execution
+      ├── 02_silver_execution
+      └── 03_gold_execution
 
 **Design principles:**
 - `utils/` contains reusable, modular logic
