@@ -247,7 +247,7 @@ databricks/
     utils/
       ├── common            # filesystem helpers and markers
       ├── bronze_lib        # API ingestion logic
-      ├── silver_transform  # transformations and DQ
+      ├── silver_transform  # transformations and reading JSON
       ├── dq                # reusable data quality rules
       └── gold_lib          # gold aggregation logic
     executions/
