@@ -36,8 +36,14 @@ Analytics / BI / Consumption
 
 The pipeline is orchestrated using Azure Data Factory, which triggers Databricks notebooks sequentially.
 
+There is a master pipeline which invoke the pipeline containning all the steps and in case of failure sending an alert email.
+
 <p align="center">
   <img src="images/adf_pipeline.png" width="500"/>
+</p>
+
+<p align="center">
+  <img src="images/adf_pipeline2.png" width="700"/>
 </p>
 
 ---
