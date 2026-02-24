@@ -32,6 +32,14 @@ Analytics / BI / Consumption
 ```
 ---
 
+## 🔄 Pipeline Orchestration (ADF)
+
+The pipeline is orchestrated using Azure Data Factory, which triggers Databricks notebooks sequentially.
+
+![ADF Pipeline Overview](images/adf_pipeline.png)
+
+---
+
 ## Architecture Components
 
 ### Azure Data Factory (ADF)
