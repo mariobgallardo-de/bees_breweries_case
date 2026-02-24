@@ -29,77 +29,76 @@ Azure Data Lake Storage Gen2 (Delta Lake)
         v
 Analytics / BI / Consumption
 <br><br>
-## Architecture Components<br>
+---
 
-####Azure Data Factory (ADF)
+## Architecture Components
 
-- Acts as the orchestration layer.<br>
-- Triggers Databricks notebooks in sequence:<br>
->Bronze ingestion<br>
->Silver transformation<br>
->Gold aggregation<br>
+### Azure Data Factory (ADF)
 
+- Acts as the orchestration layer.
+- Triggers Databricks notebooks in sequence:
+  - Bronze ingestion
+  - Silver transformation
+  - Gold aggregation
+- Centralizes scheduling, retries, and dependency management.
 
-- Centralizes scheduling, retries, and dependency management.<br>
+---
 
-####Azure Databricks
+### Azure Databricks
 
 - Core processing and transformation engine.
 - Responsible for:
-
->>API ingestion logic<br>
->Data standardization<br>
->Data Quality validation<br>
->Incremental processing<br>
->Aggregations and analytics-ready outputs<br>
-
-
+  - API ingestion logic
+  - Data standardization
+  - Data quality validation
+  - Incremental processing
+  - Aggregations and analytics‑ready outputs
 - Delta Lake is used as the storage format for Silver and Gold layers.
-<br>
 
-####Azure Data Lake Storage Gen2 (ADLS)
+---
+
+### Azure Data Lake Storage Gen2 (ADLS)
 
 - Central storage layer for the platform.
 - Stores:
-
->>Raw JSON files (Bronze)<br>
->Delta tables (Silver and Gold)
-
-
+  - Raw JSON files (Bronze)
+  - Delta tables (Silver and Gold)
 - Data is organized by ingestion date and run ID to support:
+  - Auditability
+  - Idempotency
+  - Safe reprocessing
 
->>Auditability<br>
-Idempotency<br>
-Safe reprocessing
-<br>
+---
 
-####Azure Key Vault
+### Azure Key Vault
 
 - Secure storage of secrets and credentials.
 - Integrated with:
-
->>Azure Data Factory<br>
-Databricks secret scopes
-
-
+  - Azure Data Factory
+  - Databricks secret scopes
 - Prevents credentials from being exposed in notebooks or pipelines.
-<br>
 
-#### Azure Logic Apps (Alerting)
+---
 
-- Provides event-driven email notifications.
+### Azure Logic Apps (Alerting)
+
+- Provides event‑driven email notifications.
 - Triggered on pipeline or job failures.
-- Enables proactive operational monitoring without manual intervention.
+- Enables proactive operational monitoring.
 
-<br>
+---
 
-##🧱 Data Layers
-####🥉 Bronze Layer – Raw Ingestion<br>
-Purpose:
-Persist raw API responses exactly as received, without transformations.<br>
-Key characteristics:<br>
-- Page-based ingestion from the Open Brewery DB API.<br>
-- Stored as JSON files.<br>
+## 🧱 Data Layers
+
+### 🥉 Bronze Layer – Raw Ingestion
+
+**Purpose:**  
+Persist raw API responses exactly as received, without transformations.
+
+**Key characteristics:**
+- Page‑based ingestion from the Open Brewery DB API.
+- Stored as JSON files.
+- Folder structure:
 
 Folder structure:<br>
 ingestion_date=YYYY-MM-DD/<br>
