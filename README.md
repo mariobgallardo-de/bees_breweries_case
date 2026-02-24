@@ -349,8 +349,9 @@ Due to time constraints and environment limitations, automated unit tests were n
 
 ---
 
-## ✅ Engineering Practices Applied
+## Final Notes
 
+Engineering Practices Applied:
 - Medallion Architecture (Bronze / Silver / Gold)
 - Incremental processing with Delta `MERGE`
 - Idempotent ingestion patterns
@@ -359,13 +360,3 @@ Due to time constraints and environment limitations, automated unit tests were n
 - Centralized orchestration via ADF
 - Event‑driven alerting with Logic Apps
 - Infrastructure‑aware design decisions
-
----
-
-## Final Notes
-
-This project demonstrates:
-- Practical Lakehouse architecture design
-- Strong understanding of Azure data services
-- Emphasis on reliability, data quality, and operational robustness
-- Conscious trade‑offs aligned with real‑world delivery constraints
