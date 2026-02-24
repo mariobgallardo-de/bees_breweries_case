@@ -256,6 +256,16 @@ This enables:
 
 ---
 
+## 🔐 Security & Identity
+
+Authentication and secret management follow secure practices:
+
+- A **Microsoft Entra ID Service Principal** is used for OAuth-based access (IDs not disclosed).
+- All secrets (tokens, credentials, endpoints) are stored in **Azure Key Vault** and referenced via Databricks secret scopes.
+- No secrets are stored in notebooks, ADF pipelines, or the public repository.
+
+---
+
 ## ⚠️ Environment Constraints (Trial Subscription)
 
 This solution was implemented using an **Azure Trial Subscription**, which introduces specific platform limitations.
