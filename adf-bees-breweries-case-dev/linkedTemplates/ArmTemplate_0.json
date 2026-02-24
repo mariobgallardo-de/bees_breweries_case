@@ -1,0 +1,251 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adf-bees-breweries-case-dev"
+		},
+		"ls_adb_bees_dev_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0220-221456-j4ib1vhe"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_adb_bees_dev')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-7405609740720965.5.azuredatabricks.net",
+					"authentication": "MSI",
+					"workspaceResourceId": "/subscriptions/fb7c490e-7f1d-4e19-afe8-c93c24a85716/resourceGroups/rg-bees-de-case-dev/providers/Microsoft.Databricks/workspaces/adb-bees-breweries-case-dev",
+					"existingClusterId": "[parameters('ls_adb_bees_dev_properties_typeProperties_existingClusterId')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_bees_breweries')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "01_api_ingestion",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "02_setup_gold",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "01_setup_silver",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.01:00:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/executions/01_extract_breweries_data"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_adb_bees_dev",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "02_data_standarization",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "01_api_ingestion",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.01:00:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/executions/02_transform_data"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_adb_bees_dev",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "03_data_aggregation",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "02_data_standarization",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.01:00:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/executions/03_aggregate_data"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_adb_bees_dev",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "01_setup_silver",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.01:00:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/setup/01_silver_breweries"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_adb_bees_dev",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "02_setup_gold",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.01:00:00",
+							"retry": 1,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/setup/02_gold_breweries"
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_adb_bees_dev",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "bees_breweries"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-24T02:56:18Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_adb_bees_dev')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_master_bees_breweries')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "pl_bees_breweries",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "pl_bees_breweries",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "send_email_alert",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "pl_bees_breweries",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"url": "https://prod-91.eastus.logic.azure.com:443/workflows/a0f0af4bcfdb431798f652b52ec0c770/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=iYsJG5zJCQtZhdvxoY45W5Sdja55l4YD0ejiZ8Kun7c",
+							"body": {
+								"value": "@json(concat(\n'{',\n'\"pipeline\":\"', pipeline().Pipeline, '\",',\n'\"runId\":\"', pipeline().RunId, '\",',\n'\"trigger\":\"', pipeline().TriggerName, '\",',\n'\"status\":\"', activity('pl_bees_breweries').Status, '\",',\n'\"timestamp\":\"', utcnow(), '\"',\n'}'\n))",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "bees_breweries"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-23T13:17:45Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_bees_breweries')]"
+			]
+		}
+	]
+}
