@@ -154,10 +154,16 @@ ingestion_date=YYYY-MM-DD/
   _SUCCESS
 ```
 
-- Marker files (`_SUCCESS`, `_LATEST`) guarantee:
-  - Idempotent ingestion
-  - Controlled reprocessing
-  - Support for multiple runs per day
+Marker files (`_SUCCESS`, `_LATEST`) guarantee:
+
+- **Idempotent ingestion**  
+  Raw data is ingested only once per successful run. Re‑executions do not duplicate data.
+
+- **Controlled reprocessing**  
+  When data for a given day is already successfully ingested, the Bronze layer safely **skips execution** instead of failing, allowing Silver and Gold layers to be reprocessed independently.
+
+- **Support for multiple runs per day**  
+  When enabled, multiple ingestion runs can occur within the same day, each identified by a unique `run_id`.
 
 ---
 
