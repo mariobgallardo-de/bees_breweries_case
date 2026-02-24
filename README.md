@@ -109,9 +109,9 @@ ingestion_date=YYYY-MM-DD/
 ```
 
 - Marker files (`_SUCCESS`, `_LATEST`) guarantee:
-- Idempotent ingestion
-- Controlled reprocessing
-- Support for multiple runs per day
+  - Idempotent ingestion
+  - Controlled reprocessing
+  - Support for multiple runs per day
 
 ---
 
