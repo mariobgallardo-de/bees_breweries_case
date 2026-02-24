@@ -10,7 +10,7 @@ The pipeline ingests raw API data into a **Bronze** layer, applies standardizati
 
 ---
 
-## 🏗️ High‑Level Architecture
+## High‑Level Architecture
 
 ```text
 Open Brewery DB API
@@ -32,11 +32,12 @@ Analytics / BI / Consumption
 ```
 ---
 
-## 🔄 Pipeline Orchestration (ADF)
+## Pipeline Orchestration (ADF)
 
 The pipeline is orchestrated using Azure Data Factory, which triggers Databricks notebooks sequentially.
 
-There is a master pipeline which invoke the pipeline containning all the steps and in case of failure sending an alert email.
+A master Azure Data Factory pipeline orchestrates the end‑to‑end workflow by invoking the pipeline that executes all processing steps (Bronze, Silver and Gold).
+On failure, the master pipeline triggers an automated email notification via Azure Logic Apps.
 
 <p align="center">
   <img src="images/adf_pipeline.png" width="800"/>
@@ -101,7 +102,7 @@ There is a master pipeline which invoke the pipeline containning all the steps a
 
 ---
 
-## 🧱 Data Layers
+## Data Layers
 
 ### 🥉 Bronze Layer – Raw Ingestion
 
@@ -185,7 +186,7 @@ Provide a business‑ready dataset for analytics and reporting.
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```text
 databricks/
@@ -211,6 +212,18 @@ databricks/
 
 ---
 
+## Source Control and Versioning
+
+All Databricks notebooks and pipeline logic are versioned in GitHub using Databricks Repos.
+
+This enables:
+- Full version control and change history
+- Collaboration and code review
+- Reproducibility of the pipeline logic
+- Alignment with CI/CD and enterprise development practices
+
+---
+
 ## ⚠️ Environment Constraints (Trial Subscription)
 
 This solution was implemented using an **Azure Trial Subscription**, which introduces specific platform limitations.
@@ -219,7 +232,7 @@ Architectural decisions were consciously adapted to remain **production‑realis
 
 ---
 
-### ⚙️ Compute Strategy
+### Compute Strategy
 
 - Job Clusters were initially designed for execution.
 - Due to compute capacity constraints commonly observed in trial subscriptions, job clusters could not reliably start.
@@ -232,7 +245,7 @@ This approach:
 
 ---
 
-### 🗃️ Metastore Persistence
+### Metastore Persistence
 
 - The default Hive Metastore in Databricks Standard workspaces does not persist metadata reliably.
 
