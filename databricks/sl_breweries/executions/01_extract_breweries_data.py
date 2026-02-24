@@ -8,72 +8,26 @@ from datetime import datetime
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Functions
+# MAGIC ## Import Utils
 
 # COMMAND ----------
 
-# DBTITLE 1,Extract Function
-"""
-    Defining function to extract one page of data from the API
-    and save it to the Bronze layer. The function contains the
-    retry logic to handle potential errors.
-
-    Args:
-        page (int): Page number to extract.
-    Returns:
-        list: List of dictionaries containing the data for the page.
-"""
-
-session = requests.Session()
-
-def extract_page(page: int):
-    for attempt in range(1, MAX_RETRIES):
-        try:
-            response = session.get(
-                API_URL,
-                params={"page": page,"per_page":PER_PAGE},
-                timeout=TIMEOUT,
-            )
-
-            response.raise_for_status()
-
-            return response.content
-
-        except Exception as e:
-            print(f"[WARNING] Page {page} failed (attempt{attempt}): {e}")
-
-            if attempt == MAX_RETRIES:
-                raise
-
-            time.sleep(TIME_BETWEEN_RETRIES)
+# DBTITLE 1,Bronze Extract API Functions
+# MAGIC %run /Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/utils/bronze_selection
 
 # COMMAND ----------
 
-# DBTITLE 1,Deduplication control Function
-"""
-    Check if a path already exists in the storage account.
-    
-    Args:
-        path (str): Path to check.
-    Returns:
-        bool: True if the path exists, False otherwise.    
-"""
-
-def path_exists(path: str) -> bool:
-    try:
-        dbutils.fs.ls(path)
-        return True
-    except Exception:
-        return False
+# DBTITLE 1,Common Functions
+# MAGIC %run /Workspace/Repos/mariobgallardo@gmail.com/bees_breweries_case/databricks/sl_breweries/utils/common
 
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Usage
+# MAGIC ## Configuration
 
 # COMMAND ----------
 
-# DBTITLE 1,Setting Parameters
+# DBTITLE 1,Setting parameters
 # Setting parameters for further use
 
 API_URL = "https://api.openbrewerydb.org/v1/breweries"
@@ -81,80 +35,102 @@ PER_PAGE = 200
 TIMEOUT = 30
 MAX_RETRIES = 3
 TIME_BETWEEN_RETRIES = 2
+EXPECTED_MIN = 5000
 
 STORAGE_PATH = "abfss://bronze@stgbeesbreweriescasedev.dfs.core.windows.net/openbrewerydb"
 
+ALLOW_MULTIPLE_RUNS_PER_DAY = False
+
+session = requests.Session()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Usage
+
+# COMMAND ----------
+
+# DBTITLE 1,Main: API extraction
+# Creating run parameters
 ingestion_date = datetime.utcnow().strftime("%Y-%m-%d")
-ingestion_tmsp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+run_id = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
 
-today_path = f"{STORAGE_PATH}/ingestion_date={ingestion_date}"
+day_path = f"{STORAGE_PATH}/ingestion_date={ingestion_date}"
+run_path = f"{day_path}/run_id={run_id}"
 
-# COMMAND ----------
+# Control if multiple runs per day are allowed
+day_success = f"{day_path}/_SUCCESS"
 
-# DBTITLE 1,Deduplication Control
-# Checking if the ingestion for the current day has already been executed
+if not ALLOW_MULTIPLE_RUNS_PER_DAY and path_exists(day_success):
+        raise Exception(f"Ingestion already successfully executed for {ingestion_date}. Aborting execution.")
 
-if path_exists(today_path):
-    raise Exception(
-        f"Ingestion already executed for {ingestion_date}. Aborting execution."
-    )
-
-print(f"[INFO] No Ingestion registered for {ingestion_date}. Starting ingestion.")
-
-# COMMAND ----------
-
-# DBTITLE 1,Extract API data
-# Loop to extract all pages of data from the API.
+# Starting bronze ingestion
+print(f"[INFO] Starting Bronze ingestion. ingestion_date={ingestion_date}, run_id={run_id}")
+print(f"[INFO] Output path: {run_path}")
 
 page = 1
 total_records = 0
+total_pages = 0
 
 while True:
-
     raw_bytes = extract_page(page)
 
-    # Stops when API return empty data
-    if raw_bytes == b"[]":
-        print("No more data. Ending ingestion.")
+    # Stop condition: parse and check list length
+    if is_empty_payload(raw_bytes):
+        print("[INFO] No more data returned by API. Ending ingestion loop.")
         break
 
-    # Parse data just for counting
-    page_data = json.loads(raw_bytes.decode("utf-8"))
+    # parse only for counting
+    page_data = parse_payload(raw_bytes)
     total_records += len(page_data)
+    total_pages += 1
 
-    # Setting file destination path
-    output_path = (
-        f"{STORAGE_PATH}/"
-        f"ingestion_date={ingestion_date}/"
-        f"breweries_page_{page}_{ingestion_tmsp}.json"
-    )
+    output_path = f"{run_path}/breweries_page_{page}.json"
+    write_bytes_to_path(raw_bytes, output_path)
 
-   
-    tmp_file = f"/tmp/breweries_page_{page}.json"
-    
-    with open(tmp_file, "wb") as f:  
-        f.write(raw_bytes)
-    
-    dbutils.fs.cp(f"file:{tmp_file}", output_path)
-
-    print(f"[INFO] Saved page {page} on {output_path}")
+    print(f"[INFO] Saved page {page} ({len(page_data)} records) to {output_path}")
 
     page += 1
 
-print(f"[SUCCESS] Total records ingested: {total_records}")
+print(f"[INFO] Ingestion finished. Total pages={total_pages}, total_records={total_records}")
+
+
 
 # COMMAND ----------
 
-# DBTITLE 1,Validation
-"""
-    This validation step ensures that the ingested data is not empty and meets the expected minimum volume.
-"""
-
-EXPECTED_MIN = 5000
-
+# DBTITLE 1,Volume Validation
+# Basic volume validation (fail-fast)
 if total_records == 0:
     raise Exception("API returned zero records")
 elif total_records < EXPECTED_MIN:
-    raise Exception("Unexpected ingestion volume")
-#else:
-#    dbutils.fs.put(success_marker, "SUCCESS")
+    raise Exception(f"Unexpected ingestion volume: {total_records} < {EXPECTED_MIN}")
+
+
+# COMMAND ----------
+
+# DBTITLE 1,Write SUCCESS Marker
+# Write SUCCESS marker ONLY after everything is OK
+success_payload = {
+    "ingestion_date": ingestion_date,
+    "run_id": run_id,
+    "total_pages": total_pages,
+    "total_records": total_records,
+    "per_page": PER_PAGE,
+    "api_url": API_URL,
+    "finished_at_utc": datetime.utcnow().isoformat()
+}
+write_success_marker(day_path, success_payload)
+
+# Write Success run pointer
+dbutils.fs.put(f"{run_path}/_SUCCESS", json.dumps(success_payload), overwrite=True)
+
+# Write latest run pointer
+dbutils.fs.put(f"{day_path}/_LATEST", run_id, overwrite=True)
+
+# Write Success run pointer - only if multiple runs per day are not allowed
+if not ALLOW_MULTIPLE_RUNS_PER_DAY:
+    dbutils.fs.put(f"{day_path}/_SUCCESS", json.dumps(success_payload), overwrite=True)
+
+
+print(f"[SUCCESS] Bronze ingestion completed. _SUCCESS written to {run_path}/_SUCCESS")
+print(f"[SUCCESS] Latest run pointer updated: {day_path}/_LATEST = {run_id}")

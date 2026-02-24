@@ -1,0 +1,9 @@
+[project]
+name = "bees-breweries-case"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["python_lib"]
+addopts = "-q"
