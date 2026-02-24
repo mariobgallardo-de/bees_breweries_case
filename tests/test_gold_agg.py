@@ -1,5 +1,5 @@
 from pyspark.sql import Row
-from python_lib.breweries_core import build_gold
+from breweries_core import build_gold
 
 def test_gold_aggregation_filters_and_counts(spark):
     df_silver = spark.createDataFrame([

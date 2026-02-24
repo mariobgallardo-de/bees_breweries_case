@@ -1,5 +1,5 @@
 from pyspark.sql import Row
-from python_lib.breweries_core import standardize, add_quality_flags, add_hash, build_silver_df
+from breweries_core import standardize, add_quality_flags, add_hash, build_silver_df
 
 def test_silver_standardize_and_flags(spark):
     df_raw = spark.createDataFrame([

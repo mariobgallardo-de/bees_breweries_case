@@ -1,6 +1,6 @@
 import pytest
 from pyspark.sql import Row
-from python_lib.breweries_core import validate_flag_threshold
+from breweries_core import validate_flag_threshold
 
 def test_validate_flag_threshold_raises(spark):
     df = spark.createDataFrame([
